@@ -3,13 +3,12 @@
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 
-# copy csproj and restore as distinct layers
-COPY ["ArtifactsAPI/ArtifactsAPI.csproj", "ArtifactsAPI/"]
-RUN dotnet restore "ArtifactsAPI/ArtifactsAPI.csproj"
+# Context is now the ArtifactsAPI folder, so we don't need the subfolder prefix
+COPY ["ArtifactsAPI.csproj", "./"]
+RUN dotnet restore "ArtifactsAPI.csproj"
 
 # copy everything else and build
 COPY . .
-WORKDIR /src/ArtifactsAPI
 RUN dotnet publish -c Release -o /app/publish --no-restore
 
 # Runtime stage
