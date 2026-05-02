@@ -1,6 +1,6 @@
 # Multi-stage Dockerfile for .NET 10 ASP.NET Core app
 # Build stage
-FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0-alpine AS build
 WORKDIR /src
 
 # Context is now the ArtifactsAPI folder, so we don't need the subfolder prefix
@@ -11,8 +11,8 @@ RUN dotnet restore "ArtifactsAPI.csproj"
 COPY . .
 RUN dotnet publish -c Release -o /app/publish --no-restore
 
-# Runtime stage
-FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
+# Runtime stage (Now using the tiny Alpine image!)
+FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine AS runtime
 WORKDIR /app
 COPY --from=build /app/publish ./
 
